@@ -1,10 +1,7 @@
+import BrowsePage from './listings/BrowsePage.tsx'
+
 function App() {
-  return (
-    <main>
-      <h1>Hello world!</h1>
-      <p>Welcome to Local Markets.</p>
-    </main>
-  )
+  return <BrowsePage />
 }
 
 export default App

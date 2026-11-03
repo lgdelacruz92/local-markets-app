@@ -13,7 +13,8 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite to see **Hello world!**
+Open the local URL printed by Vite (normally `http://localhost:5173/`) to browse listings.
+The page requires the same-origin listings API; without it, it shows a retryable error.
 
 ## Checks and production build
 
@@ -53,6 +54,51 @@ checks. Identity fixtures and mocked HTTP responses exist only in `tests/`; ther
 is no production fake login. TypeScript checks cover the new session module while
 preserving the existing JavaScript app entry point.
 
-This increment implements #16 only. The starter UI remains unchanged; #17–#24
-(sign-in, logout, listings, filters, details, form, publication, and sold controls)
-are incomplete. Live backend integration, OAuth, and AWS deployment are unverified.
+## Public listing browse (task #19)
+
+`src/listings/BrowsePage.tsx` is the buildable React/TypeScript page rendered at `/`.
+It requests `GET /api/listings` with no request body, auth header, or CSRF token.
+Session failure or signed-out state does not block browsing. Cards show the first
+photo (or a missing/broken-photo fallback), title, numeric price and currency code,
+and locality. Sold items are excluded defensively. Loading, empty, and retryable
+failure states are included; API error bodies are not exposed to users.
+
+Integration points for later tickets:
+
+- `useListings()` in `src/listings/useListings.ts` exposes `items`, `isLoading`,
+  `error`, and stable `refetch()`. Refetch clears the previous list while loading,
+  handles errors, and cancels/ignores stale requests. Its promise resolves after
+  a handled success or failure; inspect `error`, not just promise completion.
+- `ListingGrid` accepts those state values, `onRetry`, and optional
+  `onOpenListing(listing)`. Later controls can compose the hook and grid without
+  duplicating requests. Each hook instance owns its own list/request lifecycle.
+- `BrowsePage` also accepts `onOpenListing(listing)`. Cards link to
+  `/listings/:id` (URL-encoded ID); the callback overrides ordinary navigation.
+  Modified clicks retain link behavior. These URLs are reserved for the later
+  detail ticket; no detail route, filters, or search UI is implemented here.
+
+The Vite build emits `dist/index.html` and hashed JS/CSS assets for runtime hosting.
+Serve them alongside a same-origin `/api` proxy. No frontend credentials or
+production fixtures are required. Live backend integration is unverified.
+
+### Browse tests
+
+```sh
+npm test
+npm run lint
+npm run typecheck
+npx playwright install chromium
+npm run test:browser
+```
+
+The browser command builds the production page, starts a preview at
+`http://127.0.0.1:4173/`, and closes it afterward. All listings/images/session
+responses are test-only fixtures or intercepted requests. It checks desktop and
+375px/320px mobile layouts, photos/fallbacks, keyboard access, public fetching,
+loading, empty, error and retry states. Screenshots go to ignored `test-results/`.
+Set `PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH` only if tests must use an existing
+Chromium executable. Node/jsdom tests additionally cover malformed responses,
+network failures, callbacks, refetch state, cancellation, and stale responses.
+
+Sign-in/logout, search/filters, detail UI, creation/publication, and sold controls
+remain separate tickets. OAuth and AWS deployment are unverified.
