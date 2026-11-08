@@ -44,18 +44,95 @@ identity; a null user with no error after loading is confirmed signed-out state.
 Request failures expose retry feedback without blocking public children.
 
 `resetSession()` cancels pending requests and clears local identity/token; it does
-**not** log out on the server. Future logout controls must call it only after a
-successful backend logout. Refresh/reset/unmount prevent stale responses from
-restoring old identities. Future mutations must send the token in `X-CSRF-Token`.
+**not** log out on the server. `LogoutControl` calls it only after HTTP 204 from
+`POST /api/logout`. Refresh/reset/unmount prevent stale responses from
+restoring old identities. Mutations must send the token in `X-CSRF-Token`.
 
 Tests use Node's built-in test runner, React's `act`, and jsdom for provider lifecycle
 checks. Identity fixtures and mocked HTTP responses exist only in `tests/`; there
 is no production fake login. TypeScript checks cover the new session module while
 preserving the existing JavaScript app entry point.
 
-The starter UI remains unchanged. Shared session state (#16) and the reusable
-create-listing form (#22) are implemented; other frontend leaves remain separate.
-Live backend integration, OAuth, and AWS deployment are unverified.
+The root page includes authentication controls. Shared session state (#16), logout
+(#18), and the reusable create-listing form (#22) are implemented; other frontend
+leaves remain separate. Live backend integration, OAuth, and AWS deployment are
+unverified.
+
+## Logout control (task #18)
+
+`src/auth/LogoutControl.tsx` is mounted on `/` inside the shared session provider.
+Only signed-in users see their display name and the Log out button. The control
+sends a bodyless `POST /api/logout` with same-origin cookie credentials and the
+in-memory `X-CSRF-Token` header. Only HTTP 204 resets shared identity and token;
+no response body is read. It disables repeat clicks and announces pending state.
+403, network errors, and unexpected statuses preserve identity, display actionable
+failure feedback, and allow retry. A missing token disables the request and asks
+for a page reload. Errors are logged with diagnostics; server error text is not
+rendered. No credentials or tokens are persisted.
+
+`npm test` covers the request contract and integration with the real provider,
+including shared identity/token reset, pending duplicates, signed-out visibility,
+missing tokens, 403/network failures, unexpected 200, and retry. Browser verification
+uses only Playwright route fixtures against the real root page; it does not add a
+production fake login or test route:
+
+```sh
+node tests/browser/logout.mjs
+# Or use a system Chromium:
+CHROMIUM_EXECUTABLE_PATH=/path/to/chromium node tests/browser/logout.mjs
+```
+
+The browser script starts its own localhost Vite server on an ephemeral port and
+checks desktop/mobile behavior. No new application environment variables or
+libraries are required. Live API cookie clearing and AWS/OAuth remain unverified.
+
+## Provider sign-in initiation (task #17)
+
+`src/auth/SignInPanel.tsx` is mounted on `/`. Its button-styled native links make
+bodyless, same-origin `GET /api/auth/google/start` and
+`GET /api/auth/facebook/start` navigation requests. The browser follows the 302
+provider redirect in the current tab; there is no preflight fetch, duplicate start,
+provider SDK, provider secret, or production fake login. Native links are used
+instead of JavaScript buttons because this action is document navigation.
+Session loading and logout remain owned by their separate modules.
+
+A trusted caller can supply `failureStatus: 503 | 400 | 401 | null` to announce
+unconfigured, invalid/expired, or rejected/cancelled feedback with `role="alert"`.
+Retry links and **Continue without signing in** remain available. URL parameters
+are not interpreted as authentication results. The root currently has no trusted
+status source, so this feedback is a reusable interface, **not integrated live
+error handling**. The agreed API returns JSON errors on navigation, with no
+specified error redirect or app handoff. This missing feedback integration is a
+blocker/incomplete item for review; no new endpoint or redirect convention was
+invented. Recovery guidance explains 503/400/401 and returning with browser Back
+(possibly more than once after provider navigation). `/` remains publicly reachable.
+
+Tests are isolated from production authentication:
+
+```sh
+node --test tests/SignInPanel.test.js
+node tests/browser/sign-in.mjs
+# Optional system Chromium override:
+CHROMIUM_EXECUTABLE_PATH=/path/to/chromium node tests/browser/sign-in.mjs
+```
+
+The Playwright script starts Vite on an ephemeral `127.0.0.1` port and intercepts
+both providers' start/callback routes and external test-only provider destinations.
+It verifies GET/no body/document navigation, a single start request, external 302
+navigation, callback 302 app return, 503/400/401 JSON responses, Back recovery, and
+public root access at desktop/mobile sizes. A separate
+`/tests/fixtures/sign-in.html` harness injects trusted statuses to verify the
+panel's feedback, retry links, and browsing link; it does not claim an API-to-app
+error handoff exists. The harness is excluded from the default production build.
+The unit tests also check that untrusted URL parameters have no effect.
+No new application environment variables or libraries are required.
+
+Live OAuth, cookies, and AWS integration are unverified and deferred. A live
+callback URL must be registered with each provider, reachable from the user's
+browser under that provider's current redirect URI rules, and use HTTPS where
+required by the provider and secure session cookies. Provider credentials belong
+on the backend, never in Vite/browser environment variables. Local SSM forwarding
+alone does not establish provider-compatible callback reachability or HTTPS.
 
 ## Create-listing form (task #22)
 
