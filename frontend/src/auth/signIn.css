@@ -1,0 +1,50 @@
+.sign-in-panel {
+  max-width: 30rem;
+  margin: 2rem auto 0;
+  padding: 1.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.75rem;
+  background: #fff;
+}
+
+.sign-in-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin: 1.5rem 0;
+}
+
+.sign-in-provider {
+  display: block;
+  padding: 0.85rem 1rem;
+  border: 1px solid #4b5563;
+  border-radius: 0.375rem;
+  color: #111827;
+  background: #f9fafb;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.sign-in-provider:hover {
+  background: #e5e7eb;
+}
+
+.sign-in-panel a:focus-visible {
+  outline: 3px solid #2563eb;
+  outline-offset: 4px;
+}
+
+.sign-in-error {
+  padding: 0.75rem;
+  border: 1px solid #b91c1c;
+  border-radius: 0.375rem;
+  color: #991b1b;
+  background: #fef2f2;
+}
+
+.sign-in-help {
+  margin-bottom: 0;
+  color: #4b5563;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}

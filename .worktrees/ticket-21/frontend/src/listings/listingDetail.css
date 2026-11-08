@@ -1,0 +1,22 @@
+.listing-detail-page { max-width: 1120px; margin: 0 auto; padding: 2rem 1rem; text-align: left; }
+.detail-back { display: inline-block; margin-bottom: 1.5rem; color: #155e43; }
+.listing-detail-page button { padding: .65rem 1rem; margin-bottom: 1rem; cursor: pointer; }
+.listing-detail-page a:focus-visible, .listing-detail-page button:focus-visible { outline: 3px solid #155e43; outline-offset: 3px; }
+.detail-layout { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 2rem; }
+.detail-photos { display: grid; align-content: start; gap: 1rem; }
+.detail-photo { overflow: hidden; border-radius: .75rem; background: #e5e7eb; }
+.detail-photo img { display: block; width: 100%; max-height: 480px; object-fit: contain; }
+.detail-photo-placeholder { padding: 3rem 1rem; text-align: center; background: #e5e7eb; border-radius: .75rem; }
+.detail-information { min-width: 0; overflow-wrap: anywhere; }
+.detail-information h1 { margin-top: 0; }
+.detail-price { font-size: 1.6rem; font-weight: 700; }
+.detail-status { display: inline-block; padding: .4rem .75rem; border-radius: 1rem; font-weight: 600; }
+.detail-status-available { color: #14532d; background: #dcfce7; }
+.detail-status-sold { color: #374151; background: #e5e7eb; }
+.detail-description { white-space: pre-wrap; line-height: 1.6; }
+.detail-information dt { font-weight: 600; margin-top: 1rem; }
+.detail-information dd { margin: .25rem 0 0; white-space: pre-wrap; }
+@media (max-width: 700px) {
+  .detail-layout { grid-template-columns: minmax(0, 1fr); gap: 1.5rem; }
+  .listing-detail-page { padding: 1.5rem 1rem; }
+}
