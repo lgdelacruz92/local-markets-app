@@ -1,6 +1,6 @@
 # Auth session context
 
-Estimated reading time: 2 minutes (150 WPM)
+Estimated reading time: 3 minutes (150 WPM)
 
 ## Working agreement
 
@@ -31,3 +31,9 @@ Estimated reading time: 2 minutes (150 WPM)
 ### November 9, 2026 — Step-by-step setup
 
 - User wants to go through Google sign-in integration one step at a time. First decision: test locally or on the deployed app.
+
+### November 9, 2026 — Dev startup investigation
+
+- User added `.env` and reported `npm run dev` failing; their exact error is not yet known.
+- The dev script does not load `.env` automatically. A configuration-only check failed without loading the file and succeeded with Node's `--env-file=.env`; no service was started and no secrets were recorded.
+- Suggested starting with `node --env-file=.env --import tsx src/server.ts` from `backend/auth/`; awaiting the user's result.

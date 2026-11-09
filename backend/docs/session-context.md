@@ -19,3 +19,4 @@ Estimated reading time: 2 minutes (150 WPM)
 - Resumed from `backend/auth/` on November 9, 2026; auth-specific context is in `auth/docs/session-context.md`. Its `.env.example` contains a fixed session secret that must be replaced before use.
 - Discussed Google OAuth setup at a high level; local versus deployed testing is undecided. No credentials, configuration changes, or live tests yet.
 - User wants a step-by-step walkthrough, beginning with the choice of testing environment.
+- Auth dev startup was reported failing after adding `.env`; the dev script does not load that file automatically. Configuration-only checks passed when it was explicitly loaded; the user's exact error is unconfirmed.
