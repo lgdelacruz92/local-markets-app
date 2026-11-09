@@ -1,6 +1,6 @@
 # Local Markets backend session context
 
-Estimated reading time: 2 minutes (150 WPM)
+Estimated reading time: 3 minutes (150 WPM)
 
 ## Working agreement
 
@@ -20,3 +20,5 @@ Estimated reading time: 2 minutes (150 WPM)
 - Discussed Google OAuth setup at a high level; local versus deployed testing is undecided. No credentials, configuration changes, or live tests yet.
 - User wants a step-by-step walkthrough, beginning with the choice of testing environment.
 - Auth dev startup was reported failing after adding `.env`; the dev script does not load that file automatically. Configuration-only checks passed when it was explicitly loaded; the user's exact error is unconfirmed.
+- User requested removal of `auth/.env.example` from Git history. It is already in `origin/main`; no history rewrite or push has been performed while published-history handling is clarified.
+- User chose local-only history removal. Local `main` was rewritten and verified; GitHub and `origin/main` were not changed. Both local env files remain; the example is untracked and the branches diverge.

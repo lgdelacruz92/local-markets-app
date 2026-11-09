@@ -4,9 +4,7 @@ Estimated reading time: 1 minute (150 WPM)
 
 ## Current task
 
-- Walking through Google OAuth client integration one step at a time; user reports auth `npm run dev` fails after adding `.env`.
-- The service already supports Google OAuth but needs a Google web client ID and secret, exact registered callback, and working same-origin routing.
-- Dev script does not load `.env`; configuration-only checks failed without it and passed when explicitly loaded. The user's exact failure is unconfirmed; no service was started.
-- Next: try `node --env-file=.env --import tsx src/server.ts` from `backend/auth/` and, if it fails, collect the redacted error.
-- Local versus deployed testing remains undecided. Do not request or record credentials in project notes.
+- Rewrote local `main` to remove `backend/auth/.env.example` from its history, as requested; verified the branch log no longer contains that path.
+- Local `.env` and `.env.example` were preserved; the example is untracked. No push was performed. `origin/main`, GitHub, and local reflogs may retain the old history; local `main` now diverges from `origin/main`.
+- Previous task: Google OAuth walkthrough; auth dev script does not load `.env` automatically. User's exact startup failure remains unconfirmed.
 - Existing project context and working agreement: `docs/session-context.md`.

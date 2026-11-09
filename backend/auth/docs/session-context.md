@@ -1,6 +1,6 @@
 # Auth session context
 
-Estimated reading time: 3 minutes (150 WPM)
+Estimated reading time: 4 minutes (150 WPM)
 
 ## Working agreement
 
@@ -37,3 +37,13 @@ Estimated reading time: 3 minutes (150 WPM)
 - User added `.env` and reported `npm run dev` failing; their exact error is not yet known.
 - The dev script does not load `.env` automatically. A configuration-only check failed without loading the file and succeeded with Node's `--env-file=.env`; no service was started and no secrets were recorded.
 - Suggested starting with `node --env-file=.env --import tsx src/server.ts` from `backend/auth/`; awaiting the user's result.
+
+### November 9, 2026 — Remove example env from Git history
+
+- User requested removal of `backend/auth/.env.example` from Git history. It appears in commits reachable from `origin/main`, and local `main` is one commit ahead.
+- No history was rewritten or pushed. Awaiting direction on the published history; preserve the local `.env` and avoid recording secrets.
+
+### November 9, 2026 — Local history rewritten
+
+- User chose local history only. Rewrote local `main` to remove `backend/auth/.env.example` from its history; verified the path no longer appears in that branch's log.
+- Preserved `.env` and `.env.example` on disk; the example is now untracked. No push was performed. `origin/main`, GitHub, and local reflogs can still retain the old history; local `main` now diverges from `origin/main`.
