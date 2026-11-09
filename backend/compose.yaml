@@ -1,0 +1,29 @@
+services:
+  auth:
+    build: ./auth
+    env_file:
+      - ./auth/.env
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3001
+    ports:
+      - "127.0.0.1:3001:3001"
+
+  listings:
+    build: ./listings
+    env_file:
+      - ./listings/.env
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3002
+      AUTH_SERVICE_URL: http://auth:3001
+      LISTINGS_DATA_FILE: /data/listings.json
+    ports:
+      - "127.0.0.1:3002:3002"
+    volumes:
+      - listings-data:/data
+    depends_on:
+      - auth
+
+volumes:
+  listings-data:

@@ -1,6 +1,6 @@
 # Auth session context
 
-Estimated reading time: 5 minutes (150 WPM)
+Estimated reading time: 11 minutes (150 WPM)
 
 ## Working agreement
 
@@ -81,3 +81,74 @@ Estimated reading time: 5 minutes (150 WPM)
 
 - User wants a new OAuth client rather than using the existing 2024 clients. Directed them to create a Web application client and register the localhost callback.
 - Checked only that local app origin and Google callback match the example; no credential values were displayed or recorded. Client creation is not yet confirmed.
+
+### November 9, 2026 — Google credentials saved
+
+- User reports saving the new Google client JSON. Next: copy its client ID and secret into the private auth `.env` without sharing them in chat or committing the JSON.
+- Client creation is implied by the saved JSON, but redirect registration and live OAuth are not independently verified.
+
+### November 9, 2026 — Auth run command
+
+- User asked how to run auth again. Provided the command that explicitly loads `.env`; service startup and credential configuration remain unconfirmed.
+
+### November 9, 2026 — Frontend auth request reference
+
+- Created executable `scripts/auth.sh` to print browser-side Google sign-in, session, and CSRF-protected logout examples. The callback runs through browser redirects; it is not a frontend API call.
+- Checked script syntax, ShellCheck, and printed output. No service or live OAuth test was run; same-origin proxy wiring remains unverified.
+- Correction: the user-modified `package.json` now makes `npm run dev` load `.env` explicitly; earlier notes describe its previous behavior.
+
+### November 9, 2026 — Real curl auth checks
+
+- User clarified they wanted actual curl requests to the local auth service, not a printed frontend reference. Replaced `scripts/auth.sh` with session and Google redirect checks, using a temporary private cookie jar.
+- Script passed syntax and ShellCheck. Against the already-running service, the anonymous session succeeded and the Google start endpoint returned a 302 to Google. No end-to-end Google login or callback/proxy validation was performed.
+
+### November 9, 2026 — Cookie file permissions
+
+- Explained that `umask 077` prevents group and other users from getting permissions on newly created files, protecting the script's temporary cookie jar. `mktemp` also normally creates a private file.
+
+### November 9, 2026 — Cookie jar cleanup
+
+- Explained that the `EXIT` trap removes the temporary cookie jar when the shell exits normally or after a script error, but cannot run after an uncatchable kill or power loss.
+
+### November 9, 2026 — Reading response chunks
+
+- Explained that the stdin `data` handler appends each incoming text chunk to `body`, which accumulates the response until the `end` event; chunk boundaries are arbitrary.
+
+### November 9, 2026 — Google redirect mismatch
+
+- User reports a URL mismatch during Google authentication; exact error and registered Google redirect URI are not yet confirmed.
+- Checked the running auth server: its authorization request uses `http://localhost:3000/api/auth/google/callback` and its client ID matches the current `.env`. No credential values or OAuth state were recorded.
+- Next: inspect the new client's Authorized redirect URIs and compare the exact URI; request the redacted error if that is not the issue. Callback routing through port 3000 remains unverified.
+
+### November 9, 2026 — Google mismatch follow-up
+
+- User says the registered redirect URI matches and asks about account lockout from invalid requests. Explained that redirect mismatches are configuration errors, not failed passwords, while automated retries may trigger temporary limits or security checks.
+- Exact error is still needed to continue diagnosis; avoid sharing credentials or full OAuth URLs.
+
+### November 9, 2026 — Redirect mismatch confirmed
+
+- User supplied Google error 400 `redirect_uri_mismatch`. The running server's client ID matches both the current `.env` and the saved Google client JSON; no credentials were displayed.
+- The saved JSON's redirect URI list does not include `http://localhost:3000/api/auth/google/callback`. This JSON may be an old snapshot if the client was edited after download. User says the console URI matches; verify the same client and Authorized redirect URIs there.
+
+### November 9, 2026 — Redirect port mismatch identified
+
+- User clarified they changed the Google-registered redirect URI to port 3001 after downloading the JSON. The running service sends port 3000, explaining Google's mismatch.
+- Instructed user to register the exact port 3000 callback; the callback still needs same-origin routing from port 3000 to auth. Google-side change and successful login are not yet confirmed.
+
+### November 9, 2026 — Callback versus auth port
+
+- User asked why curl uses port 3001 while Google redirects to port 3000. Explained that the configured callback uses the app origin, which needs a proxy to auth, or a standalone auth test can use port 3001 for both APP_URL and callback with matching Google registration.
+- No configuration change or end-to-end test performed; with the standalone option the auth service's root page returns 404 and the same browser can check `/api/session` instead.
+
+### November 9, 2026 — Auth root 404
+
+- User reported the auth service's JSON `NOT_FOUND` response. Explained that this is expected at `/` after standalone sign-in but does not prove authentication; check `/api/session` in the same browser without sharing the CSRF token.
+
+### November 9, 2026 — Session check clarification
+
+- User replied "yes" to whether the session showed a user or null; the reply is ambiguous, so authentication is not yet confirmed.
+
+### November 9, 2026 — Google sign-in confirmed
+
+- User confirmed `/api/session` in the same browser returned a user containing their name after the standalone Google sign-in flow. The root 404 is expected because the auth service has no homepage.
+- This confirms the standalone browser flow, not the separate app-on-port-3000 proxy integration.
