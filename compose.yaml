@@ -1,0 +1,44 @@
+services:
+  auth:
+    build: ./backend/auth
+    env_file:
+      - ./backend/auth/.env
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3001
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('node:http').get('http://127.0.0.1:3001/', r => process.exit(r.statusCode === 404 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+
+  listings:
+    build: ./backend/listings
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3002
+      AUTH_SERVICE_URL: http://auth:3001
+      LISTINGS_DATA_FILE: /data/listings.json
+    volumes:
+      - listings-data:/data
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('node:http').get('http://127.0.0.1:3002/api/listings', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"]
+      interval: 5s
+      timeout: 3s
+      retries: 12
+    depends_on:
+      auth:
+        condition: service_healthy
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "127.0.0.1:3000:80"
+    depends_on:
+      auth:
+        condition: service_healthy
+      listings:
+        condition: service_healthy
+
+volumes:
+  listings-data:
