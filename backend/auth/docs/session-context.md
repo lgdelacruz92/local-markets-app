@@ -15,3 +15,19 @@ Estimated reading time: 2 minutes (150 WPM)
 - Listings protects writes with auth and CSRF, but create/sold handlers and ownership enforcement are absent; authorized writes return 404.
 - Same-origin proxy/container wiring, HTTPS, AWS deployment, and live provider callbacks remain unverified. SSM forwarding alone does not prove OAuth compatibility.
 - The auth report records a listings Zod audit finding; it has not been rechecked. Frontend sign-in error handoff is also incomplete.
+
+## Session log
+
+### November 9, 2026 — Project init
+
+- Initialized ongoing notes in `backend/auth/`. Future prompts in this session will be recorded here and reflected in `bookmark.md`.
+- No new substantive task was requested. Existing context and the working agreement remain in effect; no implementation or tests were started.
+
+### November 9, 2026 — Google sign-in discussion
+
+- Discussed the high-level Google OAuth setup: cloud project and consent screen, web client and exact callback, server-only credentials, same-origin routing, and live verification.
+- Local versus deployed testing is undecided. No credentials were created, configuration changed, services started, or live tests run.
+
+### November 9, 2026 — Step-by-step setup
+
+- User wants to go through Google sign-in integration one step at a time. First decision: test locally or on the deployed app.

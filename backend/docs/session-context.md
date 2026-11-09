@@ -17,3 +17,5 @@ Estimated reading time: 2 minutes (150 WPM)
 - The auth report records a listings Zod audit finding; it has not been rechecked in this session. No tests were run during resume.
 - The neighboring agent factories use this app as their workspace; their handoff says joint live testing remains unconfirmed. Do not start them just to resume.
 - Resumed from `backend/auth/` on November 9, 2026; auth-specific context is in `auth/docs/session-context.md`. Its `.env.example` contains a fixed session secret that must be replaced before use.
+- Discussed Google OAuth setup at a high level; local versus deployed testing is undecided. No credentials, configuration changes, or live tests yet.
+- User wants a step-by-step walkthrough, beginning with the choice of testing environment.
