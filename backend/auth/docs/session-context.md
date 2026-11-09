@@ -1,6 +1,6 @@
 # Auth session context
 
-Estimated reading time: 4 minutes (150 WPM)
+Estimated reading time: 5 minutes (150 WPM)
 
 ## Working agreement
 
@@ -47,3 +47,37 @@ Estimated reading time: 4 minutes (150 WPM)
 
 - User chose local history only. Rewrote local `main` to remove `backend/auth/.env.example` from its history; verified the path no longer appears in that branch's log.
 - Preserved `.env` and `.env.example` on disk; the example is now untracked. No push was performed. `origin/main`, GitHub, and local reflogs can still retain the old history; local `main` now diverges from `origin/main`.
+
+### November 9, 2026 — Resume Google setup
+
+- User asked to continue the step-by-step Google sign-in setup. Assuming localhost for the walkthrough; first check whether a Google Cloud project already exists.
+- Auth dev startup outcome remains unconfirmed. No Google configuration or live test has been verified.
+
+### November 9, 2026 — Google Cloud project
+
+- User has an existing Google Cloud project and is signed in on the Cloud Console welcome page. Next: select that project before configuring OAuth.
+
+### November 9, 2026 — Project selected
+
+- User selected their Google Cloud project. Next: open Google Auth Platform and check whether its consent setup has already been configured.
+
+### November 9, 2026 — Google Auth dashboard
+
+- User sees the Google Auth Platform dashboard. Next: inspect Audience user type and publishing status before deciding whether a test user is needed.
+
+### November 9, 2026 — Dashboard correction
+
+- User described project info, APIs, and resources tiles; this appears to be the general Cloud Console dashboard rather than Google Auth Platform. Direct them to Auth Platform before checking Audience.
+
+### November 9, 2026 — Auth Platform opened
+
+- User now sees traffic and error metrics, consistent with the Google Auth Platform dashboard. Next: check Audience settings.
+
+### November 9, 2026 — Audience status
+
+- User reports Google Auth Platform audience is External and publishing status is In production. Leave existing settings unchanged; inspect Clients before creating a separate web client.
+
+### November 9, 2026 — New Google client
+
+- User wants a new OAuth client rather than using the existing 2024 clients. Directed them to create a Web application client and register the localhost callback.
+- Checked only that local app origin and Google callback match the example; no credential values were displayed or recorded. Client creation is not yet confirmed.

@@ -1,6 +1,6 @@
 # Local Markets backend session context
 
-Estimated reading time: 3 minutes (150 WPM)
+Estimated reading time: 4 minutes (150 WPM)
 
 ## Working agreement
 
@@ -22,3 +22,11 @@ Estimated reading time: 3 minutes (150 WPM)
 - Auth dev startup was reported failing after adding `.env`; the dev script does not load that file automatically. Configuration-only checks passed when it was explicitly loaded; the user's exact error is unconfirmed.
 - User requested removal of `auth/.env.example` from Git history. It is already in `origin/main`; no history rewrite or push has been performed while published-history handling is clarified.
 - User chose local-only history removal. Local `main` was rewritten and verified; GitHub and `origin/main` were not changed. Both local env files remain; the example is untracked and the branches diverge.
+- User resumed the step-by-step Google OAuth walkthrough, provisionally targeting localhost. Auth startup and Google configuration remain unverified.
+- User has an existing Google Cloud project and is signed in to Cloud Console; project selection is the next step.
+- User selected the Google Cloud project; Google Auth Platform consent setup is next.
+- Google Auth Platform dashboard is visible; checking audience and publishing status next.
+- Correction: the described tiles appear to be the general Cloud Console dashboard, not Google Auth Platform; navigate there first.
+- User reached the Auth Platform metrics dashboard; checking Audience settings next.
+- Google Auth Platform audience is External and In production; next inspect OAuth clients without changing existing settings.
+- User wants a new Google web client; the local app origin and Google callback match the localhost example. Client creation is not yet confirmed.
