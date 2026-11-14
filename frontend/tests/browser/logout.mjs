@@ -21,6 +21,7 @@ try {
     let responseMode = 'pending'
     page.on('pageerror', (error) => pageErrors.push(error.message))
     await page.route('**/api/session', (route) => route.fulfill({ json: SIGNED_IN }))
+    await page.route('**/api/listings', (route) => route.fulfill({ json: { items: [] } }))
     await page.route('**/api/logout', async (route) => {
       logoutRequests.push(route.request())
       if (responseMode === 'network') {
