@@ -109,8 +109,41 @@ Empty arrays show **No photos provided**. Loading and failed photos have explici
 feedback; failed photos can be retried without losing listing details, and buyers
 can continue browsing other photos. Updating a listing's image URLs resets its gallery.
 The service validates the required image array and accepts only absolute HTTP(S)
-URLs, matching the backend contract. No photo uploads, placeholder product photos,
-new dependencies, routes, or application environment variables were added.
+URLs, matching the backend contract. Seller photos retain their original URLs.
+
+### Reliable demo photos
+
+The four synthetic seed listings previously depended on Unsplash hotlinks. On `/`,
+`src/listings/demoListingPhotos.ts` resolves each known seed ID **and its original
+image URL** to a photograph bundled in `public/demo-listings/`. The main image,
+thumbnails, and full-size link all use the same local asset. Customized seed photos
+and seller listings (including other Unsplash URLs) are not substituted. Failure
+and retry feedback remains available for genuine seller-image failures.
+
+This display-only compatibility mapping works with both new and already-persisted
+seed data: it does not edit storage or require deleting the Docker data volume.
+The images are illustrative demo photos, clearly labeled with a link to
+`/demo-listings/credits.html`, which records sources, authors, licenses, and resizing.
+Vite copies `public/` into the build, and the frontend Dockerfile includes it.
+No new dependencies, API contracts, uploads, or environment variables are required.
+Rebuild/redeploy the frontend to receive the fix; backend data can remain unchanged.
+
+A production-build regression test uses the real listings API and a reopened file
+store, decodes all four bundled photos without image mocks, blocks external network
+requests, and checks anonymous/signed-in rendering at desktop/mobile sizes:
+
+```sh
+# Install and build the listings service first:
+(cd ../backend/listings && npm ci && npm run build)
+npm run build
+node tests/browser/demo-listing-photos.mjs
+# Optional system Chromium override:
+CHROMIUM_EXECUTABLE_PATH=/path/to/chromium node tests/browser/demo-listing-photos.mjs
+```
+
+Only session responses are fixtures; live OAuth and deployed/container behavior
+are not covered by this script. The test uses ephemeral localhost ports and removes
+its own temporary data store afterward.
 
 Design references: [Meta's Marketplace overview](https://about.fb.com/news/2016/10/introducing-marketplace-buy-and-sell-with-your-local-community/)
 (photo-first browsing) and [Facebook's selling guide](https://www.facebook.com/help/561376580709359)
