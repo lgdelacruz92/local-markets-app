@@ -56,50 +56,51 @@ export default function ListingPhotoGallery({ title, imageUrls }: ListingPhotoGa
   }
 
   if (imageUrls.length === 0) {
-    return <div className="listing-photo-placeholder">No photos provided</div>
+    return <div className="listing-photo-placeholder mb-4 flex aspect-4/3 items-center justify-center rounded-2xl bg-sage p-4 text-center text-muted">No photos provided</div>
   }
 
   return (
-    <section className="listing-gallery" aria-label={`Photos of ${title}`} tabIndex={0} onKeyDown={handleKeyDown}>
-      <div className="listing-photo-stage" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onTouchCancel={() => { touchStart.current = null }}>
+    <section className="listing-gallery mb-4 min-w-0 rounded-2xl" aria-label={`Photos of ${title}`} tabIndex={0} onKeyDown={handleKeyDown}>
+      <div className="listing-photo-stage relative aspect-4/3 touch-pan-y touch-pinch-zoom overflow-hidden rounded-2xl bg-sage" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onTouchCancel={() => { touchStart.current = null }}>
         {!hasFailed && (
           <img
-            key={imageUrl} className="listing-photo" src={imageUrl}
+            key={imageUrl} className="listing-photo block h-full w-full object-contain" src={imageUrl}
             alt={`${title} — photo ${imageIndex + 1} of ${imageUrls.length}`}
             loading="lazy" decoding="async" referrerPolicy="no-referrer"
             onLoad={() => setLoadedUrls((urls) => [...urls, imageUrl])}
             onError={() => setFailedUrls((urls) => [...urls, imageUrl])}
           />
         )}
-        {!hasFailed && !isLoaded && <p className="listing-photo-message" role="status">Loading photo…</p>}
+        {!hasFailed && !isLoaded && <p className="listing-photo-message absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center text-muted" role="status">Loading photo…</p>}
         {hasFailed && (
-          <div className="listing-photo-message" role="status">
+          <div className="listing-photo-message absolute inset-0 flex flex-col items-center justify-center gap-3 p-4 text-center text-muted" role="status">
             <p>Photo unavailable. You can try again or browse other photos.</p>
             <button type="button" onClick={handleRetry}>Retry photo</button>
           </div>
         )}
       </div>
-      <div className="listing-photo-controls">
-        {hasMultiplePhotos && <button type="button" onClick={() => showPhoto(-1)} aria-label={`Previous photo of ${title}`}>‹</button>}
+      <div className="listing-photo-controls my-2 flex min-h-11 items-center justify-between gap-2 text-sm text-muted">
+        {hasMultiplePhotos && <button type="button" className="min-w-11 px-3 text-xl" onClick={() => showPhoto(-1)} aria-label={`Previous photo of ${title}`}>‹</button>}
         <p aria-live="polite" aria-atomic="true">Photo {imageIndex + 1} of {imageUrls.length}</p>
-        {hasMultiplePhotos && <button type="button" onClick={() => showPhoto(1)} aria-label={`Next photo of ${title}`}>›</button>}
+        {hasMultiplePhotos && <button type="button" className="min-w-11 px-3 text-xl" onClick={() => showPhoto(1)} aria-label={`Next photo of ${title}`}>›</button>}
       </div>
       {hasMultiplePhotos && (
-        <div className="listing-photo-thumbnails" aria-label="Choose a photo">
+        <div className="listing-photo-thumbnails mb-3 flex gap-2 overflow-x-auto p-1" aria-label="Choose a photo">
           {imageUrls.map((url, index) => (
             <button
+              className="relative size-16 shrink-0 overflow-hidden rounded-lg border-2 border-line bg-sage p-0 aria-pressed:border-4 aria-pressed:border-leaf"
               key={`${index}-${url}`} type="button" aria-label={`Show photo ${index + 1} of ${title}`}
               aria-pressed={imageIndex === index} onClick={() => setSelectedIndex(index)}
             >
               {!failedThumbnailUrls.includes(url) && (
-                <img src={url} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setFailedThumbnailUrls((urls) => [...urls, url])} />
+                <img className="h-full w-full object-cover" src={url} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setFailedThumbnailUrls((urls) => [...urls, url])} />
               )}
-              <span>{index + 1}</span>
+              <span className="absolute right-0 bottom-0 bg-ink px-1.5 py-0.5 text-xs text-white">{index + 1}</span>
             </button>
           ))}
         </div>
       )}
-      <a href={imageUrl} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer">Open full-size photo (new tab)</a>
+      <a className="inline-flex min-h-11 items-center text-sm font-bold" href={imageUrl} target="_blank" rel="noopener noreferrer" referrerPolicy="no-referrer">Open full-size photo (new tab)</a>
     </section>
   )
 }
