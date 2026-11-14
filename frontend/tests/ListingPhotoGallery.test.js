@@ -64,6 +64,21 @@ test('renders API cover photo with descriptive alt text, loading state, thumbnai
   assert.equal(document.querySelector('a').target, '_blank')
 })
 
+test('original demo listings use bundled photos and full-size links with visible credits', async () => {
+  const originalUrl = 'https://images.unsplash.com/photo-1598300042247-d088f8ab3a91'
+  await act(async () => root.render(createElement(ListingCard, {
+    listing: { ...LISTING, id: 'seed-chair', imageUrls: [originalUrl] },
+  })))
+  assert.equal(photo().getAttribute('src'), '/demo-listings/chair.jpg')
+  assert.equal(document.querySelector('a').getAttribute('href'), '/demo-listings/chair.jpg')
+  assert.match(document.body.textContent, /Illustrative demo photo/)
+  assert.equal(document.querySelector('a[href="/demo-listings/credits.html"]').textContent, 'Photo credits')
+
+  await renderListing([originalUrl])
+  assert.equal(photo().getAttribute('src'), originalUrl)
+  assert.doesNotMatch(document.body.textContent, /Illustrative demo photo/)
+})
+
 test('previous/next wrap and thumbnails choose the requested photo', async () => {
   await renderListing()
   await click(`Next photo of ${LISTING.title}`)
