@@ -1,4 +1,5 @@
 import type { Listing } from './types.ts'
+import ListingPhotoGallery from './ListingPhotoGallery.tsx'
 
 interface ListingCardProps {
   listing: Listing
@@ -7,6 +8,7 @@ interface ListingCardProps {
 export default function ListingCard({ listing }: ListingCardProps) {
   return (
     <article className="listing-card">
+      <ListingPhotoGallery key={JSON.stringify(listing.imageUrls)} title={listing.title} imageUrls={listing.imageUrls} />
       <h3>{listing.title}</h3>
       <p className="listing-price">{listing.currency} {listing.price.toFixed(2)}</p>
       <p>{listing.description}</p>

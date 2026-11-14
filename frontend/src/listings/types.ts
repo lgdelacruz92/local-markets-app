@@ -6,6 +6,7 @@ export interface Listing {
   currency: string
   category: string
   locality: string
+  imageUrls: string[]
   seller: { displayName: string; contact: string }
   status: 'available' | 'sold'
 }

@@ -75,8 +75,9 @@ rendered fields and rejects duplicate IDs. The view displays title, price/curren
 description, locality, category, availability, seller name, and public contact. It
 announces loading, provides an empty state, and shows safe error feedback with retry.
 Requests are cancelled on unmount; obsolete responses cannot replace current data.
-This fix adds no dependencies, API routes, or environment variables, and does not
-implement listing creation, filters, photos, or a separate detail page.
+This view adds no dependencies, API routes, or environment variables, and does not
+implement listing creation, filters, or a separate detail page. Listing photo browsing
+is described below.
 
 `npm test` covers the API contract and real root/session integration, including
 successful login, anonymous browse, slow/failed session checks, logout, empty/error
@@ -93,6 +94,45 @@ The script starts Vite on an ephemeral localhost port. It checks a simulated pro
 callback returning to `/`, signed-in reload, logout, failure/retry, and empty state;
 it does not verify live provider credentials or real OAuth cookies. Chromium must
 be installed separately (for example, `npx playwright install chromium`).
+
+## Listing photos
+
+Listing cards on `/` render the existing API's `imageUrls` for both signed-in and
+anonymous visitors. `ListingPhotoGallery.tsx` shows the first photo, previous/next
+buttons with wraparound, numbered thumbnails, and a current-photo count. Focus the
+gallery to use Left/Right arrow keys, or swipe horizontally on the image on mobile.
+Vertical scrolling and pinch zoom remain available. The full-size link opens the
+selected original image in a new tab for closer inspection.
+
+Images are lazy-loaded and retain their entire composition with `object-fit: contain`.
+Empty arrays show **No photos provided**. Loading and failed photos have explicit
+feedback; failed photos can be retried without losing listing details, and buyers
+can continue browsing other photos. Updating a listing's image URLs resets its gallery.
+The service validates the required image array and accepts only absolute HTTP(S)
+URLs, matching the backend contract. No photo uploads, placeholder product photos,
+new dependencies, routes, or application environment variables were added.
+
+Design references: [Meta's Marketplace overview](https://about.fb.com/news/2016/10/introducing-marketplace-buy-and-sell-with-your-local-community/)
+(photo-first browsing) and [Facebook's selling guide](https://www.facebook.com/help/561376580709359)
+(listing photos and cover photos). These inform the interaction, not a claim to
+reproduce every Facebook feature.
+
+`npm test` includes gallery navigation, loading/failure/retry, keyboard and synthetic
+touch events, empty/single-photo states, URL validation, and signed-in photo rendering.
+Desktop/mobile browser checks use deterministic test-only image responses:
+
+```sh
+node tests/browser/listing-photos.mjs
+node tests/browser/listings.mjs
+# Optional system Chromium override for either script:
+CHROMIUM_EXECUTABLE_PATH=/path/to/chromium node tests/browser/listing-photos.mjs
+```
+
+The scripts start Vite on an ephemeral localhost port. They check actual image decoding,
+photo controls, full-size navigation, loading/failure/retry, and photos after a simulated
+OAuth return. Swipe is exercised with synthetic touch events, not a physical device.
+Live OAuth, deployment, and third-party photo hosting availability remain unverified;
+listing photo URLs must be publicly accessible and usable by the buyer's browser.
 
 ## Logout control (task #18)
 

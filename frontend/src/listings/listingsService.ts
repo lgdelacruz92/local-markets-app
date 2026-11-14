@@ -1,5 +1,15 @@
 import type { Listing } from './types.ts'
 
+function isPublicImageUrl(value: unknown): value is string {
+  if (typeof value !== 'string') return false
+  try {
+    const url = new URL(value)
+    return url.protocol === 'http:' || url.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 function isListing(value: unknown): value is Listing {
   if (typeof value !== 'object' || value === null) return false
   if (!('id' in value) || typeof value.id !== 'string' || !value.id.trim()) return false
@@ -8,6 +18,7 @@ function isListing(value: unknown): value is Listing {
   if (!('currency' in value) || typeof value.currency !== 'string') return false
   if (!('category' in value) || typeof value.category !== 'string') return false
   if (!('locality' in value) || typeof value.locality !== 'string') return false
+  if (!('imageUrls' in value) || !Array.isArray(value.imageUrls) || !value.imageUrls.every(isPublicImageUrl)) return false
   if (!('price' in value) || typeof value.price !== 'number') return false
   if (!Number.isFinite(value.price) || value.price < 0) return false
   if (!/^[A-Z]{3}$/.test(value.currency)) return false

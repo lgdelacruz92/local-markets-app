@@ -20,6 +20,10 @@ try {
     let isSignedIn = false
     let listingsMode = 'success'
     page.on('pageerror', (error) => pageErrors.push(error.message))
+    await page.route('https://images.example.test/**', (route) => route.fulfill({
+      contentType: 'image/svg+xml',
+      body: '<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300"><rect width="400" height="300" fill="teal"/></svg>',
+    }))
     await page.route('**/api/session', (route) => route.fulfill({
       json: isSignedIn ? SIGNED_IN : { user: null, csrfToken: 'test-only-token' },
     }))
@@ -52,6 +56,9 @@ try {
     await page.getByRole('link', { name: 'Complete test sign-in' }).click()
     await page.getByText('Signed in as Test Seller', { exact: true }).waitFor()
     await page.getByRole('heading', { name: LISTING.title, exact: true }).waitFor()
+    await page.locator('.listing-photo').scrollIntoViewIfNeeded()
+    await page.waitForFunction(() => document.querySelector('.listing-photo')?.naturalWidth > 0)
+    assert.equal(await page.locator('.listing-photo').getAttribute('src'), LISTING.imageUrls[0])
     assert.equal(await page.getByRole('heading', { name: 'Sign in to Local Markets' }).count(), 0)
     await page.reload()
     await page.getByRole('heading', { name: LISTING.title, exact: true }).waitFor()
