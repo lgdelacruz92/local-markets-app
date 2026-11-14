@@ -18,4 +18,4 @@ docker compose down
 
 Open `http://localhost:3000`. The frontend proxies API requests to the private auth and listings containers. Listing data persists in a named Docker volume across rebuilds and ordinary `docker compose down`; removing the volume deletes that data. Auth sessions are in memory and disappear when auth restarts.
 
-This is a local HTTP prototype, not a production HTTPS deployment. The current frontend is a basic page, and the listings API currently supports reads but not listing creation or updates. Live OAuth depends on provider configuration and callback rules.
+This is a local HTTP prototype, not a production HTTPS deployment. The frontend displays public listings for signed-in and anonymous visitors, and the listings API currently supports reads but not listing creation or updates. Live OAuth depends on provider configuration and callback rules.

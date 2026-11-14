@@ -70,7 +70,7 @@ async function verifyFlowResult(page, baseUrl, provider, destination, startStatu
   assert.match(await page.locator('#sign-in-help').textContent(), /503.*not configured.*401.*rejected.*400.*invalid/s)
   await page.getByRole('link', { name: 'Continue without signing in' }).click()
   await page.waitForURL(`${baseUrl}/`)
-  await page.getByText('Welcome to Local Markets.', { exact: true }).waitFor()
+  await page.getByRole('heading', { name: 'Local Markets', exact: true }).waitFor()
 }
 
 async function verifyFeedbackFixture(page, baseUrl) {
@@ -91,7 +91,7 @@ async function verifyFeedbackFixture(page, baseUrl) {
   await page.getByRole('alert').waitFor({ state: 'detached' })
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true)
   await page.getByRole('link', { name: 'Continue without signing in' }).click()
-  await page.getByText('Welcome to Local Markets.', { exact: true }).waitFor()
+  await page.getByRole('heading', { name: 'Local Markets', exact: true }).waitFor()
 }
 
 try {
@@ -106,6 +106,7 @@ try {
     const pageErrors = []
     page.on('pageerror', (error) => pageErrors.push(error.message))
     await page.route('**/api/session', (route) => route.fulfill({ json: { user: null, csrfToken: 'test-only-token' } }))
+    await page.route('**/api/listings', (route) => route.fulfill({ json: { items: [] } }))
     for (const provider of ['google', 'facebook']) {
       for (const [startStatus, callbackStatus] of [[302, 302], [503, null], [302, 400], [302, 401]]) {
         await verifyProviderFlow(page, baseUrl, provider, startStatus, callbackStatus)

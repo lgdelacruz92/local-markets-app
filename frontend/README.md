@@ -13,7 +13,10 @@ npm install
 npm run dev
 ```
 
-Open the local URL printed by Vite to see **Hello world!**
+The root page displays **Local Markets** and loads public listings from
+`GET /api/listings`, independently of sign-in state. For working API requests,
+use the root Docker Compose setup at `http://localhost:3000`; Vite alone does not
+provide the backend APIs.
 
 ## Checks and production build
 
@@ -50,13 +53,46 @@ restoring old identities. Mutations must send the token in `X-CSRF-Token`.
 
 Tests use Node's built-in test runner, React's `act`, and jsdom for provider lifecycle
 checks. Identity fixtures and mocked HTTP responses exist only in `tests/`; there
-is no production fake login. TypeScript checks cover the new session module while
-preserving the existing JavaScript app entry point.
+is no production fake login. TypeScript checks cover the application source,
+including `src/App.tsx` and `src/main.tsx`.
 
-The root page includes authentication controls. Shared session state (#16), logout
-(#18), and the reusable create-listing form (#22) are implemented; other frontend
-leaves remain separate. Live backend integration, OAuth, and AWS deployment are
-unverified.
+The root page includes authentication controls and public listing cards. Shared
+session state (#16), logout (#18), and the reusable create-listing form (#22) are
+implemented; other frontend leaves remain separate. Live OAuth and AWS deployment
+remain unverified.
+
+## Listings after sign-in
+
+`src/App.tsx` always mounts `src/listings/ListingsSection.tsx`. The listings request
+is not gated on session loading, login success, or session-check errors. A successful
+OAuth callback returning to `/` therefore loads listings alongside the session.
+Signed-in users see their account/logout control instead of the sign-in prompt;
+logging out retains public listings.
+
+`src/listings/listingsService.ts` reads the existing same-origin `GET /api/listings`
+contract (`{ items: [...] }`) with cancellation and no-store caching. It validates
+rendered fields and rejects duplicate IDs. The view displays title, price/currency,
+description, locality, category, availability, seller name, and public contact. It
+announces loading, provides an empty state, and shows safe error feedback with retry.
+Requests are cancelled on unmount; obsolete responses cannot replace current data.
+This fix adds no dependencies, API routes, or environment variables, and does not
+implement listing creation, filters, photos, or a separate detail page.
+
+`npm test` covers the API contract and real root/session integration, including
+successful login, anonymous browse, slow/failed session checks, logout, empty/error
+states, retry, StrictMode cancellation, and late responses. Browser regression checks
+use test-only API/provider routes on desktop and mobile:
+
+```sh
+node tests/browser/listings.mjs
+# Optional system Chromium override:
+CHROMIUM_EXECUTABLE_PATH=/path/to/chromium node tests/browser/listings.mjs
+```
+
+The script starts Vite on an ephemeral localhost port. It checks a simulated provider
+callback returning to `/`, signed-in reload, logout, failure/retry, and empty state;
+it does not verify live provider credentials or real OAuth cookies. Chromium must
+be installed separately (for example, `npx playwright install chromium`).
 
 ## Logout control (task #18)
 

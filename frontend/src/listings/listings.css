@@ -1,0 +1,43 @@
+.listings-section {
+  margin: 2rem auto;
+  max-width: 72rem;
+  text-align: left;
+}
+
+.listing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+  gap: 1rem;
+  padding: 0;
+  list-style: none;
+}
+
+.listing-card {
+  height: 100%;
+  box-sizing: border-box;
+  padding: 1.25rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  background: #fff;
+  overflow-wrap: anywhere;
+}
+
+.listing-card h3 {
+  margin-top: 0;
+}
+
+.listing-price {
+  font-weight: 700;
+}
+
+.listing-card dl div {
+  margin-top: 0.75rem;
+}
+
+.listing-card dt {
+  font-weight: 600;
+}
+
+.listing-card dd {
+  margin: 0;
+}
