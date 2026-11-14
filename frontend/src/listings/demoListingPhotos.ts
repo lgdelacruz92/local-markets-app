@@ -25,7 +25,9 @@ export function resolveDemoListingPhotos(listing: Pick<Listing, 'id' | 'imageUrl
   if (!demoPhoto) return listing.imageUrls
 
   return listing.imageUrls.map((url) => {
-    if (url === demoPhoto.originalUrl) return demoPhoto.localUrl
+    // CDN sizing/format parameters do not change the identity of a seed photo.
+    const originalPhotoUrl = url.split(/[?#]/, 1)[0]
+    if (originalPhotoUrl === demoPhoto.originalUrl) return demoPhoto.localUrl
     return url
   })
 }

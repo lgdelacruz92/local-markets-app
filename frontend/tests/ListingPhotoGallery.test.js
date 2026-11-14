@@ -131,6 +131,33 @@ test('failed photos show safe feedback, retry and allow browsing other photos', 
   assert.doesNotMatch(document.body.textContent, /Photo unavailable|Loading photo/)
 })
 
+test('a failed thumbnail cannot hide a loaded main photo or prevent selecting another photo', async () => {
+  await renderListing()
+  await act(async () => photo().dispatchEvent(new window.Event('load')))
+  const thumbnails = document.querySelectorAll('.listing-photo-thumbnails img')
+  await act(async () => thumbnails[0].dispatchEvent(new window.Event('error')))
+  assert.equal(photo().src, LISTING.imageUrls[0])
+  assert.doesNotMatch(document.body.textContent, /Photo unavailable|Loading photo/)
+  assert.equal(document.querySelectorAll('.listing-photo-thumbnails img').length, 2)
+
+  await act(async () => thumbnails[1].dispatchEvent(new window.Event('error')))
+  await click(`Next photo of ${LISTING.title}`)
+  assert.equal(photo().src, LISTING.imageUrls[1])
+  await act(async () => photo().dispatchEvent(new window.Event('load')))
+  assert.doesNotMatch(document.body.textContent, /Photo unavailable|Loading photo/)
+})
+
+test('retry succeeds even when the thumbnail fails again during recovery', async () => {
+  await renderListing()
+  await act(async () => photo().dispatchEvent(new window.Event('error')))
+  await click('Retry photo')
+  const thumbnail = document.querySelector('.listing-photo-thumbnails img')
+  await act(async () => thumbnail.dispatchEvent(new window.Event('error')))
+  assert.equal(photo().src, LISTING.imageUrls[0])
+  await act(async () => photo().dispatchEvent(new window.Event('load')))
+  assert.doesNotMatch(document.body.textContent, /Photo unavailable|Loading photo/)
+})
+
 test('updated listing photo URLs reset selection and previous failure state', async () => {
   await renderListing()
   await click(`Show photo 3 of ${LISTING.title}`)

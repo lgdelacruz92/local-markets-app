@@ -47,6 +47,12 @@ try {
     await gallery.scrollIntoViewIfNeeded()
     await page.waitForFunction(() => document.querySelector('.listing-photo')?.naturalWidth > 0)
     assert.equal(await photo.getAttribute('src'), LISTING.imageUrls[0])
+    // A thumbnail error must not remove an already-decoded main image.
+    await gallery.locator('.listing-photo-thumbnails img').first().evaluate((image) => {
+      image.dispatchEvent(new Event('error'))
+    })
+    await photo.evaluate(async (image) => { await image.decode() })
+    assert.equal(await gallery.getByText('Photo unavailable.', { exact: false }).count(), 0)
     await gallery.getByRole('button', { name: `Next photo of ${LISTING.title}`, exact: true }).click()
     assert.equal(await photo.getAttribute('src'), LISTING.imageUrls[1])
     await gallery.getByRole('button', { name: `Show photo 3 of ${LISTING.title}`, exact: true }).click()

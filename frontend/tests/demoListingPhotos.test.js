@@ -20,6 +20,25 @@ test('each original demo image resolves to a bundled asset without changing pers
   }
 })
 
+test('known demo photos with CDN query parameters or fragments still use bundled assets', () => {
+  for (const [id, originalUrl, localUrl] of DEMO_PHOTOS) {
+    for (const suffix of ['?auto=format&fit=crop&w=800&q=80', '#photo', '?w=1200#photo']) {
+      const imageUrls = [`${originalUrl}${suffix}`]
+      assert.deepEqual(resolveDemoListingPhotos({ id, imageUrls }), [localUrl])
+      assert.deepEqual(imageUrls, [`${originalUrl}${suffix}`])
+    }
+  }
+})
+
+test('similar paths, other hosts, and seller-owned variants are not demo photos', () => {
+  const originalUrl = DEMO_PHOTOS[0][1]
+  for (const url of [`${originalUrl}-custom?w=800`, originalUrl.replace('images.unsplash.com', 'seller.example')]) {
+    assert.deepEqual(resolveDemoListingPhotos({ id: 'seed-chair', imageUrls: [url] }), [url])
+  }
+  const sellerUrl = `${originalUrl}?w=800`
+  assert.deepEqual(resolveDemoListingPhotos({ id: 'seller-chair', imageUrls: [sellerUrl] }), [sellerUrl])
+})
+
 test('seller listings, unknown Unsplash photos, and customized demo photos remain unchanged', () => {
   const originalUrl = DEMO_PHOTOS[0][1]
   assert.deepEqual(resolveDemoListingPhotos({ id: 'seller-chair', imageUrls: [originalUrl] }), [originalUrl])
