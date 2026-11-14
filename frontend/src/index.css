@@ -1,17 +1,53 @@
-:root {
-  font-family: system-ui, sans-serif;
-  color: #1f2937;
-  background: #f9fafb;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
+@import 'tailwindcss';
+@import '@fontsource/nunito/latin-400.css';
+@import '@fontsource/nunito/latin-600.css';
+@import '@fontsource/nunito/latin-700.css';
+@import '@fontsource/nunito/latin-800.css';
+@import '@fontsource/fraunces/latin-600.css';
+
+@theme {
+  --font-sans: 'Nunito', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces', Georgia, serif;
+  --color-cream: #fffaf2;
+  --color-ink: #29483e;
+  --color-leaf: #315c48;
+  --color-muted: #5e6b60;
+  --color-sage: #edf3e8;
+  --color-peach: #fbe4d5;
+  --color-honey: #f6e2a4;
+  --color-line: #dedfd0;
+  --color-error: #a13a2f;
+  --shadow-card: 0 6px 24px rgb(41 72 62 / 0.06);
 }
 
-body {
-  margin: 0;
-  min-width: 320px;
-}
+@layer base {
+  body {
+    @apply m-0 min-w-80 bg-cream font-sans text-ink antialiased;
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+  }
 
-main {
-  padding: 3rem 1.5rem;
-  text-align: center;
+  h1, h2, h3 {
+    @apply font-display font-semibold;
+  }
+
+  a {
+    @apply text-leaf underline underline-offset-4;
+  }
+
+  button {
+    @apply min-h-11 cursor-pointer rounded-xl bg-leaf px-5 py-2.5 font-bold text-white;
+  }
+
+  button:hover:not(:disabled) {
+    @apply bg-ink;
+  }
+
+  button:disabled {
+    @apply cursor-not-allowed opacity-60;
+  }
+
+  :focus-visible {
+    @apply outline-3 outline-offset-4 outline-leaf;
+  }
 }

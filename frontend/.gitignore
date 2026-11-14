@@ -12,6 +12,9 @@ dist
 dist-ssr
 *.local
 
+# Generated theme regression screenshots
+test-results/tailwind-theme-*.png
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

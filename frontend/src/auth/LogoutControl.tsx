@@ -32,15 +32,15 @@ export default function LogoutControl() {
   if (!user) return null
 
   return (
-    <section aria-label="Signed-in account">
-      <p>Signed in as {user.displayName}</p>
+    <section aria-label="Signed-in account" className="mt-6 flex flex-wrap items-center gap-4 rounded-2xl border border-line bg-white p-5">
+      <p className="mr-auto font-bold">Signed in as {user.displayName}</p>
       <button type="button" onClick={handleLogout} disabled={isPending || !csrfToken}>
         {isPending ? 'Logging out…' : 'Log out'}
       </button>
       {isPending && <p role="status">Logging out. Please wait.</p>}
-      {error && <p role="alert">{error}</p>}
+      {error && <p role="alert" className="w-full text-error">{error}</p>}
       {!csrfToken && (
-        <p role="alert">Your sign-in security token is missing. Reload the page before logging out.</p>
+        <p role="alert" className="w-full text-error">Your sign-in security token is missing. Reload the page before logging out.</p>
       )}
     </section>
   )

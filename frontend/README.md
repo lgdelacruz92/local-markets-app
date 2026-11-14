@@ -1,6 +1,6 @@
 # Frontend
 
-A minimal React application for Local Markets, built with Vite.
+A React application for Local Markets, built with Vite and Tailwind CSS.
 
 ## Getting started
 
@@ -29,6 +29,46 @@ npm run preview
 ```
 
 Production files are written to `dist/`.
+
+## Styling and neighborhood theme
+
+Tailwind CSS v4 runs through `@tailwindcss/vite`; there is no CDN script or
+runtime stylesheet generator. Use utility classes directly in components.
+`src/index.css` owns the shared `@theme` tokens and base styles for controls,
+links, and keyboard focus. The old auth, gallery/listings, and form stylesheets
+have been replaced by utilities, including the reusable form that is not yet
+mounted in the production seller flow.
+
+The palette combines cream, sage, peach, and butter yellow with dark green text
+and controls. `font-sans` uses Nunito; headings use Fraunces via `font-display`.
+The Latin font files are bundled locally by Fontsource, use `font-display: swap`,
+and have system/Georgia fallbacks. No Google Fonts requests or new environment
+variables are needed. `WelcomeSection.tsx` and the decorative, non-interactive
+`NeighborhoodIllustration.tsx` give `/` a welcoming community feel without
+changing API contracts or adding marketplace features.
+
+The listing grid uses one column below 640px, two from 640px, and three from
+1024px. Photos retain `object-contain`, swipe/keyboard browsing, and vertical
+scroll/pinch zoom. Sign-in recovery guidance is available under **Need help
+signing in?**. The skip link, visible focus outlines, and minimum 44px button
+heights support keyboard and touch use; loading/error/empty feedback remains.
+
+Run the production-theme regression check after installing Chromium:
+
+```sh
+npm run test:theme
+# Optional system Chromium override:
+CHROMIUM_EXECUTABLE_PATH=/path/to/chromium npm run test:theme
+```
+
+This builds the app and checks 320/375/768/1280px layouts, bundled fonts and demo
+photos with external requests blocked, selected text/button contrast pairs,
+keyboard focus and skip navigation, help disclosure, anonymous/signed-in states,
+and long-text overflow. Screenshots are generated in
+`test-results/tailwind-theme-*.png` (ignored by Git). APIs/session responses are
+test fixtures; use `node tests/browser/demo-listing-photos.mjs` for the existing
+real-listings-service photo regression. These checks do not constitute a full
+accessibility audit or live OAuth/deployment verification.
 
 ## Shared session state (task #16)
 
