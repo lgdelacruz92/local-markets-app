@@ -74,6 +74,7 @@ test('successful login renders public listings instead of the placeholder or sig
   assert.match(document.body.textContent, /Signed in as Test Seller/)
   assert.equal(document.querySelector('#sign-in-heading'), null)
   assert.equal(document.querySelector('article h3').textContent, LISTING.title)
+  assert.equal(document.querySelector('.listing-photo').getAttribute('src'), LISTING.imageUrls[0])
   for (const text of ['USD 45.00', LISTING.description, LISTING.locality, LISTING.category, 'Alex', 'alex@example.com', 'available']) {
     assert.ok(document.querySelector('article').textContent.includes(text))
   }
@@ -140,6 +141,7 @@ test('successful logout retains public listings without another listing request'
   await act(async () => activeRequest('/api/logout').resolve(new Response(null, { status: 204 })))
   assert.ok(document.querySelector('#sign-in-heading'))
   assert.equal(document.querySelector('article h3').textContent, LISTING.title)
+  assert.equal(document.querySelector('.listing-photo').getAttribute('src'), LISTING.imageUrls[0])
   assert.equal(requests.filter((request) => request.url === '/api/listings').length, 1)
 })
 

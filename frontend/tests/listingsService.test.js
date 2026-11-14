@@ -41,6 +41,12 @@ test('malformed items and duplicate IDs are rejected before rendering', async ()
     { items: [{ ...LISTING, seller: null }] },
     { items: [{ ...LISTING, title: 123 }] },
     { items: [{ ...LISTING, status: 'unknown' }] },
+    { items: [{ ...LISTING, imageUrls: undefined }] },
+    { items: [{ ...LISTING, imageUrls: null }] },
+    { items: [{ ...LISTING, imageUrls: 'https://images.example.test/chair.jpg' }] },
+    ...[123, null, '', '/relative.jpg', 'javascript:alert(1)', 'data:image/svg+xml,bad', 'file:///photo.jpg', 'not a URL']
+      .map((imageUrl) => ({ items: [{ ...LISTING, imageUrls: [imageUrl] }] })),
+
     { items: [LISTING, LISTING] },
   ]
   for (const body of invalidBodies) {
