@@ -107,7 +107,10 @@ selected original image in a new tab for closer inspection.
 Images are lazy-loaded and retain their entire composition with `object-fit: contain`.
 Empty arrays show **No photos provided**. Loading and failed photos have explicit
 feedback; failed photos can be retried without losing listing details, and buyers
-can continue browsing other photos. Updating a listing's image URLs resets its gallery.
+can continue browsing other photos. Thumbnail failures hide only that thumbnail,
+not the main image: a failed thumbnail cannot mark a loaded photo unavailable or
+cancel its retry. Numbered buttons remain usable to load photos independently.
+Updating a listing's image URLs resets its gallery.
 The service validates the required image array and accepts only absolute HTTP(S)
 URLs, matching the backend contract. Seller photos retain their original URLs.
 
@@ -115,7 +118,9 @@ URLs, matching the backend contract. Seller photos retain their original URLs.
 
 The four synthetic seed listings previously depended on Unsplash hotlinks. On `/`,
 `src/listings/demoListingPhotos.ts` resolves each known seed ID **and its original
-image URL** to a photograph bundled in `public/demo-listings/`. The main image,
+image URL**, ignoring CDN query parameters and fragments, to a photograph bundled
+in `public/demo-listings/`. The photo host and path must still match exactly; other
+hosts or photo paths are never substituted. The main image,
 thumbnails, and full-size link all use the same local asset. Customized seed photos
 and seller listings (including other Unsplash URLs) are not substituted. Failure
 and retry feedback remains available for genuine seller-image failures.
@@ -127,6 +132,12 @@ The images are illustrative demo photos, clearly labeled with a link to
 Vite copies `public/` into the build, and the frontend Dockerfile includes it.
 No new dependencies, API contracts, uploads, or environment variables are required.
 Rebuild/redeploy the frontend to receive the fix; backend data can remain unchanged.
+For the root Compose deployment, use `docker compose up --build -d frontend` from
+the repository root, then reload `/`. Do not delete the `listings-data` volume.
+If demo photos still fail, check the browser's Network panel for the failed image
+URL: known seed photos should request `/demo-listings/`, not Unsplash. A local
+photo response must have an `image/*` content type, not the app's HTML fallback.
+Check the deployed build and static-file serving before changing stored listings.
 
 A production-build regression test uses the real listings API and a reopened file
 store, decodes all four bundled photos without image mocks, blocks external network

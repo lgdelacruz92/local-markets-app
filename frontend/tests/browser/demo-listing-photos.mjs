@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict'
 import { once } from 'node:events'
-import { mkdtemp, readFile, rm } from 'node:fs/promises'
+import { mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { chromium } from 'playwright'
 import { preview } from 'vite'
@@ -16,6 +16,13 @@ let browser
 try {
   const filePath = join(temporaryDirectory, 'listings.json')
   await FileListingStore.open(filePath)
+  // Reproduce persisted CDN variants missed by exact-string demo matching.
+  const listings = JSON.parse(await readFile(filePath, 'utf8'))
+  const suffixes = ['?auto=format&fit=crop&w=800&q=80', '#photo', '?w=1200#photo', '']
+  for (const [index, listing] of listings.entries()) {
+    listing.imageUrls = listing.imageUrls.map((url) => `${url}${suffixes[index]}`)
+  }
+  await writeFile(filePath, `${JSON.stringify(listings, null, 2)}\n`)
   const persistedData = await readFile(filePath, 'utf8')
   const repository = await FileListingStore.open(filePath)
   apiServer = createApp(repository).listen(0, '127.0.0.1')

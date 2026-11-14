@@ -10,6 +10,7 @@ export default function ListingPhotoGallery({ title, imageUrls }: ListingPhotoGa
   const [selectedIndex, setSelectedIndex] = useState(0)
   const [failedUrls, setFailedUrls] = useState<string[]>([])
   const [loadedUrls, setLoadedUrls] = useState<string[]>([])
+  const [failedThumbnailUrls, setFailedThumbnailUrls] = useState<string[]>([])
   const touchStart = useRef<{ x: number; y: number } | null>(null)
   const imageIndex = Math.min(selectedIndex, Math.max(0, imageUrls.length - 1))
   const imageUrl = imageUrls[imageIndex]
@@ -90,8 +91,8 @@ export default function ListingPhotoGallery({ title, imageUrls }: ListingPhotoGa
               key={`${index}-${url}`} type="button" aria-label={`Show photo ${index + 1} of ${title}`}
               aria-pressed={imageIndex === index} onClick={() => setSelectedIndex(index)}
             >
-              {!failedUrls.includes(url) && (
-                <img src={url} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setFailedUrls((urls) => [...urls, url])} />
+              {!failedThumbnailUrls.includes(url) && (
+                <img src={url} alt="" loading="lazy" referrerPolicy="no-referrer" onError={() => setFailedThumbnailUrls((urls) => [...urls, url])} />
               )}
               <span>{index + 1}</span>
             </button>
